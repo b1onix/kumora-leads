@@ -2,7 +2,7 @@ import Database from 'better-sqlite3';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { DATA_DIR } from './paths.js';
+import { DATA_DIR, SQLITE_PATH } from './paths.js';
 
 /**
  * SQLite data layer (multi-tenant). Replaces the old single JSON file.
@@ -24,9 +24,11 @@ import { DATA_DIR } from './paths.js';
  * data reshaping is needed then.
  */
 
-const DB_FILE = path.join(DATA_DIR, 'app.db');
+const DB_FILE = SQLITE_PATH;
 
-fs.mkdirSync(DATA_DIR, { recursive: true });
+// Ensure the DB's directory exists (it may be a mounted volume path distinct
+// from DATA_DIR when SQLITE_PATH is set explicitly).
+fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
 
 export const db = new Database(DB_FILE);
 db.pragma('journal_mode = WAL');

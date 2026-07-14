@@ -72,14 +72,14 @@ function banner(lines) {
   console.log('└' + bar + '┘');
 }
 
-const server = app.listen(config.port, '127.0.0.1', async () => {
+const server = app.listen(config.port, config.host, async () => {
   const health = settingsHealth();
   const llm = await llmHealthCheck();
   const userCount = countUsers();
 
   banner([
     'LeadExtractor Dashboard — API running',
-    `http://127.0.0.1:${config.port}`,
+    config.publicUrl || `http://${config.host}:${config.port}`,
     '',
     llm.ok ? `DeepSeek: OK (${llm.model})` : `DeepSeek: NOT WORKING — ${llm.error}`,
     health.ok ? 'owner settings: complete' : `owner settings: missing ${health.missing.join(', ')}`,

@@ -1,0 +1,20 @@
+# Fallback build config if Dokploy uses Nixpacks instead of the Dockerfile.
+# The Dockerfile is the primary/recommended path; this exists so a Nixpacks
+# build also succeeds.
+#
+# better-sqlite3 is a native addon — without python3 + a C++ toolchain the
+# `npm ci` compile step fails (this was the original deploy error).
+
+providers = ["node"]
+
+[phases.setup]
+nixPkgs = ["nodejs_22", "python3", "gcc", "gnumake"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "node server/index.js"
+
+[variables]
+NODE_ENV = "production"

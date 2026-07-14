@@ -35,8 +35,16 @@ const num = (v, def) => {
   return Number.isFinite(n) ? n : def;
 };
 
+const isProd = process.env.NODE_ENV === 'production';
+
 export const config = {
   port: num(process.env.PORT, 4820),
+  // In a container the server must bind 0.0.0.0 so the reverse proxy can reach
+  // it; locally we bind loopback so nothing else on the machine is exposed.
+  host: process.env.HOST || (isProd ? '0.0.0.0' : '127.0.0.1'),
+  // Public base URL of the deployed site (used for cookie Secure + absolute
+  // links). e.g. https://kumora.io
+  publicUrl: process.env.PUBLIC_URL || '',
   outreachToken: process.env.OUTREACH_TOKEN || '',
 
   resendApiKey: process.env.RESEND_API_KEY || '',
@@ -62,7 +70,7 @@ export const config = {
   deepseekModel: process.env.DEEPSEEK_MODEL || 'deepseek-chat',
   deepseekBaseUrl: process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com',
 
-  isProd: process.env.NODE_ENV === 'production'
+  isProd
 };
 
 /**
