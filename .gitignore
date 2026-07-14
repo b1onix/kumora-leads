@@ -1,0 +1,10 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+
+# secrets & local state (never commit these)
+.env
+data/
+server/.claude-workdir/

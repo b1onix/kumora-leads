@@ -1,0 +1,27 @@
+{
+  "name": "leadextractor-dashboard",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Outreach dashboard for LeadExtractor — import Google Maps leads, generate cold emails with Claude Code, send via Resend.",
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c cyan,magenta \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "node server/index.js",
+    "dev:client": "vite",
+    "build": "vite build",
+    "start": "node server/index.js",
+    "setup": "node server/setup.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.11.1",
+    "express": "^4.21.2",
+    "resend": "^4.6.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vite": "^6.0.7"
+  }
+}
