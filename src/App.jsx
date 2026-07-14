@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createContext, useContext, useCallback } from 'react';
 import { usePolling } from './api.js';
-import { useAuth, AuthScreen } from './Auth.jsx';
+import { useAuth, AuthScreen, PinMark } from './Auth.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Leads from './pages/Leads.jsx';
 import Compose from './pages/Compose.jsx';
@@ -92,7 +92,7 @@ function Shell() {
       <DataCtx.Provider value={{ state, refresh, toast, counts }}>
         <div className="app">
           <aside className="sidebar">
-            <div className="brand"><span className="pin">◉</span> Lead<b>Extractor</b></div>
+            <div className="brand"><span className="pin"><PinMark size={17} /></span> Lead<b>Extractor</b></div>
             <nav className="nav">
               {Object.entries(ROUTES).map(([path, r]) => {
                 const active = hash === path;
@@ -126,7 +126,7 @@ function Shell() {
           <main className="main">
             {error && (
               <div className="banner warn">
-                Can't reach the local server ({error}). Make sure <code>npm run dev</code> is running.
+                Can't reach the server ({error}). Check your connection and refresh.
               </div>
             )}
             <Comp />

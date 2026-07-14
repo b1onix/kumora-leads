@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth, AuthScreen } from '../Auth.jsx';
+import { useAuth, AuthScreen, PinMark } from '../Auth.jsx';
 
 /**
  * Extension connect handshake page (route: #/connect).
@@ -49,7 +49,7 @@ export default function Connect() {
     <div className="auth-wrap">
       <div className="auth-card">
         <div className="brand" style={{ justifyContent: 'center', marginBottom: 8 }}>
-          <span className="pin">◉</span> Lead<b>Extractor</b>
+          <PinMark size={17} /> Lead<b>Extractor</b>
         </div>
         <h2 style={{ textAlign: 'center', margin: '4px 0' }}>Connect extension</h2>
 
