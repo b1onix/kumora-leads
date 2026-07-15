@@ -3,6 +3,7 @@ import { getState, update, newId, hashKey } from './store.js';
 import { loadSettings, saveSettings, settingsHealth } from './config.js';
 import { resolveRequestUser } from './auth.js';
 import { leadsRemaining, bumpUsage, usageSummary } from './plans.js';
+import { enqueueHunts } from './emailHunt.js';
 import * as engine from './engine.js';
 import { sendTestEmail } from './mailer.js';
 import * as journal from './journal.js';
@@ -60,6 +61,7 @@ router.post('/import', requireToken, (req, res) => {
   let dupes = 0;
   let clipped = 0;
   const campaignId = newId();
+  const huntIds = []; // new leads with a website but no email → server-side hunt
 
   update(userId, (db) => {
     for (const raw of incoming) {
@@ -75,8 +77,9 @@ router.post('/import', requireToken, (req, res) => {
         continue;
       }
       if (imported >= remaining) { clipped++; continue; }
+      const id = newId();
       db.leads.push({
-        id: newId(),
+        id,
         ...lead,
         campaignId,
         status: lead.email ? 'ready' : 'no_email',
@@ -85,6 +88,7 @@ router.post('/import', requireToken, (req, res) => {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       });
+      if (!lead.email && lead.website) huntIds.push(id);
       imported++;
     }
     if (imported > 0) {
@@ -98,6 +102,9 @@ router.post('/import', requireToken, (req, res) => {
   });
 
   if (imported > 0) bumpUsage(userId, { leads: imported });
+  // Emails are discovered server-side now (the extension no longer visits
+  // business websites) — kick off the hunt for everything that needs one.
+  if (huntIds.length > 0) enqueueHunts(userId, huntIds);
 
   res.json({
     ok: true,

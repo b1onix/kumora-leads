@@ -58,10 +58,11 @@ const SECTIONS = [
         <p>The extension runs only on Google Maps pages you open. It captures
         listing data only after you press <b>Start Extraction</b>, and it stops when
         you stop it.</p>
-        <p>Because Maps doesn't show email addresses, the extension visits the
-        public websites of the businesses you captured to look for a published
-        contact address (for example on a contact page). These requests fetch
-        public pages only.</p>
+        <p>The extension itself talks to exactly one place: your own dashboard
+        account. Because Maps doesn't show email addresses, our server — not your
+        browser — visits the public websites of the businesses you pushed to your
+        account and looks for a published contact address (for example on a
+        contact page). These requests fetch public pages only.</p>
         <p>Captured leads stay in your browser until you push them to your
         dashboard account or export them yourself. The extension stores your
         account API key locally so it knows which account is yours. It does not
