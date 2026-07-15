@@ -1,6 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useData } from '../App.jsx';
 import { api } from '../api.js';
+
+/** Writer-agent picker: choose the voice your emails are written in. */
+function WriterPicker({ toast }) {
+  const [writers, setWriters] = useState([]);
+  const [current, setCurrent] = useState('');
+
+  useEffect(() => {
+    api.writers()
+      .then((r) => { setWriters(r.writers); setCurrent(r.current); })
+      .catch((e) => toast(e.message, 'err'));
+  }, []);
+
+  async function pick(key) {
+    const prev = current;
+    setCurrent(key); // optimistic
+    try {
+      await api.saveSettings({ writerStyle: key });
+    } catch (e) {
+      setCurrent(prev);
+      toast(e.message, 'err');
+    }
+  }
+
+  if (writers.length === 0) return null;
+
+  return (
+    <div className="card pad" style={{ marginBottom: 20 }}>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1.4, color: 'var(--ink-3)', marginBottom: 12 }}>
+        Writer voice
+      </div>
+      <div className="writer-grid">
+        {writers.map((w) => (
+          <button
+            key={w.key}
+            className={'writer-card' + (current === w.key ? ' on' : '')}
+            onClick={() => pick(w.key)}
+            type="button"
+          >
+            <span className="writer-name">{w.label}</span>
+            <span className="writer-tag">{w.tagline}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function Compose() {
   const { state, refresh, toast } = useData();
@@ -34,7 +80,7 @@ export default function Compose() {
   return (
     <>
       <div className="page-head">
-        <div><h1>Generate emails</h1><p>Claude researches each business's website and writes a personalized cold email.</p></div>
+        <div><h1>Generate emails</h1><p>Kumora reads each business's website and writes one personal cold email — in the voice you pick below.</p></div>
         {(engine.generating || engine.sending) && (
           <button className="btn danger" onClick={() => api.stop().then(refresh)}>■ Stop</button>
         )}

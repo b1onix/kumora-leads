@@ -38,6 +38,7 @@ export const api = {
   checkout: (plan) => req('POST', '/billing/checkout', { plan }),
   // data
   state: () => req('GET', '/state'),
+  writers: () => req('GET', '/writers'),
   settings: () => req('GET', '/settings'),
   saveSettings: (patch) => req('POST', '/settings', patch),
   testEmail: (to) => req('POST', '/test-email', { to }),

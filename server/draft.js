@@ -1,5 +1,6 @@
 import { runLLM } from './llm.js';
 import { fetchWebsiteSnippet } from './website.js';
+import { writerStyle } from './writers.js';
 
 /**
  * Builds the cold-email prompt for one lead, runs the model, and parses the
@@ -63,13 +64,14 @@ ${JSON.stringify(leadInfo, null, 2)}
 </lead>
 
 ${research}
+${writerStyle(settings.writerStyle)}
 ${customBlock}
-WRITING RULES:
-- 50 to 125 words total. Short paragraphs, conversational, no fluff.
-- Subject: 2-7 words, all lowercase, specific, no clickbait, no brackets, no spam words (free, guarantee, act now).
+HARD RULES (these always win over the voice above):
+- Never exceed 125 words total; if the voice sets a tighter budget, honor it.
+- Subject: 2-7 words, specific, no clickbait, no brackets, no spam words (free, guarantee, act now). Lowercase unless the voice explicitly allows sentence case.
 - The FIRST LINE must reference the specific detail you found. Banned openers: "I hope this email finds you well", "I came across your website", "My name is".
-- Connect their situation to the sender's offer in one or two sentences. Outcomes, not features.
-- Exactly ONE soft, low-friction CTA phrased as a question (e.g. "worth a quick chat?"). Never ask for a 30-minute meeting.
+- Connect their situation to the sender's offer. Outcomes, not features.
+- Exactly ONE soft, low-friction CTA phrased as a question. Never ask for a 30-minute meeting.
 - No bullet points, no placeholders like [Name], no emojis, no links in the body.
 - Sign off with just the sender's first name.
 - Do NOT include any unsubscribe or legal text (it is appended automatically later).

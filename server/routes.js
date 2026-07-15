@@ -4,6 +4,7 @@ import { loadSettings, saveSettings, settingsHealth } from './config.js';
 import { resolveRequestUser } from './auth.js';
 import { leadsRemaining, bumpUsage, usageSummary } from './plans.js';
 import { enqueueHunts } from './emailHunt.js';
+import { writerList, getWriter } from './writers.js';
 import * as engine from './engine.js';
 import { sendTestEmail } from './mailer.js';
 import * as journal from './journal.js';
@@ -188,6 +189,12 @@ router.post('/suppress', requireToken, (req, res) => {
   const email = req.body?.email;
   const ok = engine.suppress(req.userId, email);
   res.json({ ok });
+});
+
+// ── writer agents (voice picker) ────────────────────────────────────────────
+router.get('/writers', (req, res) => {
+  const s = loadSettings(req.userId);
+  res.json({ writers: writerList(), current: getWriter(s.writerStyle) });
 });
 
 // ── settings ───────────────────────────────────────────────────────────────

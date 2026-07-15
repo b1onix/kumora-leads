@@ -98,6 +98,8 @@ const SETTING_KEYS = [
   'resendApiKey', 'fromEmail', 'fromName', 'replyTo', 'physicalAddress',
   'unsubscribeMailto', 'senderCompany', 'offer', 'ctaGoal', 'dailyCap',
   'testMode', 'testInbox',
+  // Which writer agent voices the emails (see server/writers.js).
+  'writerStyle',
   // Pro/Ultra only: extra instructions injected into the AI writer's prompt.
   // Saved for everyone but ENFORCED at generation time (engine.js strips it
   // for free plans), so a downgrade instantly stops honoring it.
@@ -119,6 +121,7 @@ function envDefaults() {
     dailyCap: config.dailyCap,
     testMode: config.testMode,
     testInbox: config.testInbox,
+    writerStyle: 'friendly',
     aiInstructions: ''
   };
 }
