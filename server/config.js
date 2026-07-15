@@ -65,10 +65,19 @@ export const config = {
 
   // ── DeepSeek (email generation) ──────────────────────────────────────────
   // OpenAI-compatible chat-completions API. Replaces the Claude CLI so the
-  // server needs no interactive login and runs fine on a VPS.
+  // server needs no interactive login and runs fine on a VPS. This key is
+  // ALWAYS the platform's own — users never configure their own model key.
   deepseekApiKey: process.env.DEEPSEEK_API_KEY || '',
   deepseekModel: process.env.DEEPSEEK_MODEL || 'deepseek-chat',
   deepseekBaseUrl: process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com',
+
+  // ── Stripe (subscriptions) ───────────────────────────────────────────────
+  // Billing is optional at boot: with no keys set, the Billing page still
+  // renders but upgrades explain that purchasing isn't available yet.
+  stripeSecretKey: process.env.STRIPE_SECRET_KEY || '',
+  stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
+  stripePricePro: process.env.STRIPE_PRICE_PRO || '',
+  stripePriceUltra: process.env.STRIPE_PRICE_ULTRA || '',
 
   isProd
 };
@@ -88,7 +97,11 @@ import { db, OWNER_USER_ID } from './db.js';
 const SETTING_KEYS = [
   'resendApiKey', 'fromEmail', 'fromName', 'replyTo', 'physicalAddress',
   'unsubscribeMailto', 'senderCompany', 'offer', 'ctaGoal', 'dailyCap',
-  'testMode', 'testInbox'
+  'testMode', 'testInbox',
+  // Pro/Ultra only: extra instructions injected into the AI writer's prompt.
+  // Saved for everyone but ENFORCED at generation time (engine.js strips it
+  // for free plans), so a downgrade instantly stops honoring it.
+  'aiInstructions'
 ];
 
 /** Env-seeded defaults, used when a user hasn't overridden a given field. */
@@ -105,7 +118,8 @@ function envDefaults() {
     ctaGoal: config.ctaGoal,
     dailyCap: config.dailyCap,
     testMode: config.testMode,
-    testInbox: config.testInbox
+    testInbox: config.testInbox,
+    aiInstructions: ''
   };
 }
 

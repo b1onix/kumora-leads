@@ -2,6 +2,7 @@ import express from 'express';
 import { getState, update, newId, hashKey } from './store.js';
 import { loadSettings, saveSettings, settingsHealth } from './config.js';
 import { resolveRequestUser } from './auth.js';
+import { leadsRemaining, bumpUsage, usageSummary } from './plans.js';
 import * as engine from './engine.js';
 import { sendTestEmail } from './mailer.js';
 import * as journal from './journal.js';
@@ -43,8 +44,21 @@ router.post('/import', requireToken, (req, res) => {
   const query = String(body.query || '').trim();
   if (incoming.length === 0) return res.status(400).json({ error: 'no leads in payload' });
 
+  // Plan quota: extractions per calendar month. Dupes never count against it —
+  // only genuinely new leads do — so we import new leads until the quota runs
+  // out and report how many were left behind.
+  const remaining = leadsRemaining(userId);
+  if (remaining <= 0) {
+    return res.status(402).json({
+      error: 'monthly lead extraction limit reached — upgrade your plan to keep going',
+      code: 'quota_leads',
+      quota: usageSummary(userId)
+    });
+  }
+
   let imported = 0;
   let dupes = 0;
+  let clipped = 0;
   const campaignId = newId();
 
   update(userId, (db) => {
@@ -60,6 +74,7 @@ router.post('/import', requireToken, (req, res) => {
         dupes++;
         continue;
       }
+      if (imported >= remaining) { clipped++; continue; }
       db.leads.push({
         id: newId(),
         ...lead,
@@ -82,7 +97,16 @@ router.post('/import', requireToken, (req, res) => {
     }
   });
 
-  res.json({ ok: true, imported, dupes, total: getState(userId).leads.length });
+  if (imported > 0) bumpUsage(userId, { leads: imported });
+
+  res.json({
+    ok: true,
+    imported,
+    dupes,
+    clipped, // leads NOT imported because the monthly quota ran out mid-batch
+    total: getState(userId).leads.length,
+    quota: usageSummary(userId)
+  });
 });
 
 // ── read state ─────────────────────────────────────────────────────────────
@@ -96,6 +120,7 @@ router.get('/state', (req, res) => {
     suppression: state.suppression,
     engine: engine.statusFor(userId),
     sentToday: journal.sentToday(userId),
+    usage: usageSummary(userId),
     health
   });
 });

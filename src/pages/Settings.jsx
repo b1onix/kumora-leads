@@ -70,6 +70,8 @@ export default function Settings() {
             <label className="field"><span className="fl">Call-to-action goal</span>
               <input type="text" value={s.ctaGoal || ''} onChange={(e) => set('ctaGoal', e.target.value)} placeholder="a quick 15-minute call this week" /></label>
           </Section>
+
+          <AiWriterSection s={s} set={set} />
         </div>
 
         <div style={{ flex: 1 }}>
@@ -99,6 +101,40 @@ export default function Settings() {
         </div>
       </div>
     </>
+  );
+}
+
+/**
+ * Custom AI writer — Pro/Ultra feature. The field is always editable and saved
+ * so nothing is lost, but the server only honors it on plans that include it;
+ * on Free we show the upgrade path.
+ */
+function AiWriterSection({ s, set }) {
+  const { state } = useData();
+  const allowed = !!state?.usage?.customAI;
+
+  return (
+    <Section title="Custom AI writer">
+      {!allowed && (
+        <div className="note warn" style={{ marginTop: 0, marginBottom: 12 }}>
+          Custom instructions are a <b>Pro</b> feature — <a href="#/billing">upgrade your plan</a> to
+          shape how the AI writes. Your text is kept and activates the moment you upgrade.
+        </div>
+      )}
+      <label className="field">
+        <span className="fl">Writer instructions <span className="hint">tone, angle, phrases to use or avoid</span></span>
+        <textarea
+          rows={4}
+          value={s.aiInstructions || ''}
+          onChange={(e) => set('aiInstructions', e.target.value)}
+          placeholder={'e.g. Write like a friendly local, mention we’re family-run, never use the word “solutions”, always reference their city.'}
+        />
+      </label>
+      <div className="note">
+        These instructions are added to every email the AI drafts for you. Word limits,
+        the single call-to-action, and compliance rules always still apply.
+      </div>
+    </Section>
   );
 }
 

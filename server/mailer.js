@@ -2,6 +2,7 @@ import { Resend } from 'resend';
 import { loadSettings } from './config.js';
 import * as journal from './journal.js';
 import { hashKey } from './store.js';
+import { emailQuotaExceeded, bumpUsage } from './plans.js';
 
 /**
  * All real email sending lives here, behind guards that protect BOTH manual
@@ -52,6 +53,9 @@ export function sendGuards(userId, lead, state, settings) {
   }
   if (!settings.testMode && journal.alreadySent(userId, email)) {
     return { allowed: false, reason: 'already emailed this address before (journal)' };
+  }
+  if (!settings.testMode && emailQuotaExceeded(userId)) {
+    return { allowed: false, reason: 'monthly email limit reached — upgrade your plan to keep sending' };
   }
   if (!settings.testMode && journal.sentToday(userId) >= settings.dailyCap) {
     return { allowed: false, reason: `daily cap reached (${settings.dailyCap})` };
@@ -122,6 +126,8 @@ export async function sendLead(userId, lead, settings) {
         resendId: data.id,
         testMode: !!settings.testMode
       });
+      // Only real deliveries consume plan quota — test-mode dry runs are free.
+      if (!settings.testMode) bumpUsage(userId, { emails: 1 });
       return { ok: true, resendId: data.id };
     }
 

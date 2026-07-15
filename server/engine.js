@@ -2,6 +2,18 @@ import { getState, update } from './store.js';
 import { loadSettings } from './config.js';
 import { generateDraft } from './draft.js';
 import { sendLead, sendGuards } from './mailer.js';
+import { getUserPlan, planLimits } from './plans.js';
+
+/**
+ * Per-user settings with plan gates applied. The custom AI writer field is a
+ * paid feature: it stays saved for everyone, but only reaches the prompt when
+ * the user's plan includes it.
+ */
+function settingsFor(userId) {
+  const settings = loadSettings(userId);
+  if (!planLimits(getUserPlan(userId)).customAI) settings.aiInstructions = '';
+  return settings;
+}
 
 /**
  * The pipeline engine. Owns the per-lead state machine and concurrency-limited
@@ -109,7 +121,7 @@ function pumpGeneration(userId) {
 
 async function runGeneration(userId, id) {
   const t = tenant(userId);
-  const settings = loadSettings(userId);
+  const settings = settingsFor(userId);
   setLead(userId, id, { status: 'generating' });
   const lead = getLead(userId, id);
   if (!lead) return;

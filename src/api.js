@@ -33,6 +33,9 @@ export const api = {
   // account
   apiKey: () => req('GET', '/account/apikey'),
   regenerateApiKey: () => req('POST', '/account/apikey/regenerate'),
+  // billing
+  billing: () => req('GET', '/billing'),
+  checkout: (plan) => req('POST', '/billing/checkout', { plan }),
   // data
   state: () => req('GET', '/state'),
   settings: () => req('GET', '/settings'),

@@ -1,20 +1,23 @@
 import React, { useState, useEffect, createContext, useContext, useCallback } from 'react';
 import { usePolling } from './api.js';
 import { useAuth, AuthScreen, PinMark } from './Auth.jsx';
+import { IconCompass, IconPins, IconQuill, IconPlane, IconSliders, IconTag } from './Icons.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Leads from './pages/Leads.jsx';
 import Compose from './pages/Compose.jsx';
 import Review from './pages/Review.jsx';
 import Settings from './pages/Settings.jsx';
+import Billing from './pages/Billing.jsx';
 import Connect from './pages/Connect.jsx';
 
 // Tiny hash-based router (no dependency).
 const ROUTES = {
-  '/': { label: 'Dashboard', icon: '◈', comp: Dashboard },
-  '/leads': { label: 'Leads', icon: '≡', comp: Leads },
-  '/compose': { label: 'Generate', icon: '✎', comp: Compose },
-  '/review': { label: 'Review & Send', icon: '➤', comp: Review },
-  '/settings': { label: 'Settings', icon: '⚙', comp: Settings }
+  '/': { label: 'Dashboard', icon: IconCompass, comp: Dashboard },
+  '/leads': { label: 'Leads', icon: IconPins, comp: Leads },
+  '/compose': { label: 'Generate', icon: IconQuill, comp: Compose },
+  '/review': { label: 'Review & Send', icon: IconPlane, comp: Review },
+  '/billing': { label: 'Plan & Billing', icon: IconTag, comp: Billing },
+  '/settings': { label: 'Settings', icon: IconSliders, comp: Settings }
 };
 
 function useHash() {
@@ -44,6 +47,32 @@ function ToastHost({ toasts }) {
 // ---- app-wide data context (single poll shared by all pages) ----
 const DataCtx = createContext(null);
 export const useData = () => useContext(DataCtx);
+
+/** Sidebar plan chip + monthly usage meters (leads extracted / emails sent). */
+function PlanMeters({ usage }) {
+  const meter = (label, m) => {
+    const pct = m.limit ? Math.min(100, Math.round((m.used / m.limit) * 100)) : 0;
+    const near = m.limit && pct >= 85;
+    return (
+      <div className="meter">
+        <div className="meter-top">
+          <span>{label}</span>
+          <span>{m.used.toLocaleString()} / {m.limit ? m.limit.toLocaleString() : '∞'}</span>
+        </div>
+        <div className="meter-track">
+          <div className={'meter-fill' + (near ? ' near' : '')} style={{ width: (m.limit ? pct : 4) + '%' }} />
+        </div>
+      </div>
+    );
+  };
+  return (
+    <div className="plan-box">
+      <a className={'plan-chip ' + usage.plan} href="#/billing">{usage.planLabel} plan</a>
+      {meter('Leads', usage.leads)}
+      {meter('Emails', usage.emails)}
+    </div>
+  );
+}
 
 export default function App() {
   const { user, loading } = useAuth();
@@ -96,12 +125,13 @@ function Shell() {
             <nav className="nav">
               {Object.entries(ROUTES).map(([path, r]) => {
                 const active = hash === path;
+                const Icon = r.icon;
                 let badge = null;
                 if (path === '/leads' && counts.total) badge = counts.total;
                 if (path === '/review' && counts.needReview) badge = counts.needReview;
                 return (
                   <a key={path} href={'#' + path} className={active ? 'active' : ''}>
-                    <span className="ico">{r.icon}</span>
+                    <span className="ico"><Icon /></span>
                     {r.label}
                     {badge != null && <span className="badge">{badge}</span>}
                   </a>
@@ -109,13 +139,13 @@ function Shell() {
               })}
             </nav>
             <div className="sidebar-foot">
+              {state?.usage && <PlanMeters usage={state.usage} />}
               <div className="conn">
                 <span className={'dot ' + (connected ? 'on' : 'off')} />
-                {connected ? 'Server connected' : 'Server offline'}
+                {connected ? 'Connected' : 'Offline'}
               </div>
-              {state?.engine?.generating && <div>✎ generating {state.engine.genRemaining} queued…</div>}
-              {state?.engine?.sending && <div>➤ sending…</div>}
-              <div style={{ marginTop: 8 }}>Sent today: {state?.sentToday ?? 0}</div>
+              {state?.engine?.generating && <div>drafting · {state.engine.genRemaining} queued</div>}
+              {state?.engine?.sending && <div>sending…</div>}
               <div className="user-row">
                 <span className="user-email" title={user?.email}>{user?.email}</span>
                 <button className="link-btn" onClick={logout}>Log out</button>

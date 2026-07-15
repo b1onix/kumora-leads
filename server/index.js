@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { config, settingsHealth, ROOT } from './config.js';
 import { router } from './routes.js';
 import { authRouter } from './authRoutes.js';
+import { billingRouter, stripeWebhook, billingConfigured } from './billing.js';
 import { llmHealthCheck } from './llm.js';
 import { runMigration } from './migrate.js';
 import { db } from './db.js';
@@ -23,6 +24,11 @@ if (migration.ran) {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
+
+// Stripe webhook FIRST, with a raw body — signature verification needs the
+// exact bytes, so this route must never pass through express.json.
+app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
+
 app.use(express.json({ limit: '4mb' }));
 
 // CORS: the extension pushes leads with an `Authorization: Bearer <api_key>`
@@ -52,6 +58,7 @@ app.get('/api/health', async (req, res) => {
 // Auth + account + connect endpoints (public / cookie-based). Mounted before
 // the tenant-scoped data router so /api/auth/* isn't caught by requireUser.
 app.use('/api', authRouter);
+app.use('/api', billingRouter);
 app.use('/api', router);
 
 // In production, serve the built React client from dist/.
@@ -83,6 +90,7 @@ const server = app.listen(config.port, config.host, async () => {
     '',
     llm.ok ? `DeepSeek: OK (${llm.model})` : `DeepSeek: NOT WORKING — ${llm.error}`,
     health.ok ? 'owner settings: complete' : `owner settings: missing ${health.missing.join(', ')}`,
+    billingConfigured() ? 'billing: Stripe configured' : 'billing: not configured (upgrades disabled)',
     `accounts: ${userCount} registered`
   ]);
 

@@ -40,6 +40,15 @@ The lead has a website (${lead.website}) but its text could not be retrieved. Pe
 This lead has no website. Personalize from the category, location, and rating/review count. Never invent facts.`;
   }
 
+  // Pro/Ultra accounts can shape the writer with their own instructions.
+  // engine.js clears this field for plans that don't include it, so its
+  // presence here means the plan allows it. Style-level only — the output
+  // contract and compliance rules below still win on any conflict.
+  const custom = String(settings.aiInstructions || '').trim();
+  const customBlock = custom
+    ? `\nCUSTOM STYLE INSTRUCTIONS FROM THE SENDER (follow them unless they conflict with the writing rules or output format below):\n${custom.slice(0, 2000)}\n`
+    : '';
+
   return `You are an expert cold-email copywriter. Write ONE personalized cold outreach email to the business described below.
 
 <sender>
@@ -54,7 +63,7 @@ ${JSON.stringify(leadInfo, null, 2)}
 </lead>
 
 ${research}
-
+${customBlock}
 WRITING RULES:
 - 50 to 125 words total. Short paragraphs, conversational, no fluff.
 - Subject: 2-7 words, all lowercase, specific, no clickbait, no brackets, no spam words (free, guarantee, act now).

@@ -99,7 +99,9 @@ b, strong { font-weight: 700; }
 }
 .nav a:hover { background: var(--chart); color: var(--ink); }
 .nav a.active { background: var(--ink); color: #fff; }
-.nav a .ico { width: 18px; text-align: center; font-size: 14px; opacity: 0.85; }
+.nav a .ico { width: 18px; display: inline-flex; align-items: center; justify-content: center; opacity: 0.9; }
+.nav a .ico svg { display: block; }
+.nav a.active .ico { color: var(--survey); }
 .nav .badge {
   margin-left: auto;
   font-family: var(--font-mono);
@@ -507,6 +509,101 @@ table.leads td.name { color: var(--ink); font-weight: 600; }
 
 .progress-track { height: 6px; border-radius: 4px; background: var(--hairline-2); overflow: hidden; }
 .progress-track .pf { height: 100%; background: var(--survey); border-radius: 4px; transition: width 0.4s ease; }
+
+/* ---------- plans, quotas & billing ---------- */
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+.plan-box { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--hairline-2); }
+.plan-chip {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 3px 9px;
+  border-radius: 5px;
+  text-decoration: none;
+  margin-bottom: 10px;
+  background: var(--chart);
+  color: var(--ink-2);
+  border: 1px solid var(--hairline);
+}
+.plan-chip.pro { background: var(--survey-tint); color: var(--survey-deep); border-color: #f3c4ae; }
+.plan-chip.ultra, .plan-chip.owner { background: var(--ink); color: #fff; border-color: var(--ink); }
+.plan-chip:hover { border-color: var(--survey); }
+
+.meter { margin-bottom: 8px; }
+.meter-top {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.4px;
+  color: var(--ink-3);
+  margin-bottom: 3px;
+}
+.meter-track { height: 4px; border-radius: 3px; background: var(--hairline-2); overflow: hidden; }
+.meter-track.big { height: 8px; border-radius: 5px; }
+.meter-fill { height: 100%; border-radius: 3px; background: var(--ink); transition: width 0.4s ease; }
+.meter-fill.near { background: var(--survey); }
+
+.plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.plan-card {
+  position: relative;
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 24px 22px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+}
+.plan-card.highlight { border-color: var(--survey); box-shadow: 0 6px 24px rgba(232, 73, 15, 0.12); }
+.plan-card.current { border-color: var(--ink); }
+.plan-flag {
+  position: absolute;
+  top: -9px; left: 20px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: var(--survey);
+  color: #fff;
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+.plan-name {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  color: var(--ink-2);
+}
+.plan-price {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -1.2px;
+  margin: 6px 0 14px;
+}
+.plan-price span { font-size: 14px; font-weight: 600; color: var(--ink-3); letter-spacing: 0; }
+.plan-feats { list-style: none; margin-bottom: 18px; flex: 1; }
+.plan-feats li {
+  font-size: 13px;
+  color: var(--ink-2);
+  padding: 7px 0;
+  border-top: 1px solid var(--hairline-2);
+}
+.plan-feats li:first-child { border-top: none; }
+.plan-feats li b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.plan-feats li.off { color: var(--ink-3); }
+
+.usage-row { margin-bottom: 14px; }
+.usage-top { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.usage-top .mono { font-weight: 400; font-size: 12px; color: var(--ink-3); }
 
 /* ============================================================
    AUTH — the signature moment.
