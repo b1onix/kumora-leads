@@ -43,7 +43,7 @@ export default function Dashboard() {
         <div className="card pad empty">
           <div className="big">◉</div>
           <h3>No leads yet</h3>
-          <p>Open Google Maps, scrape with the LeadExtractor extension, then hit <b>⇪ Dashboard</b>.<br />
+          <p>Open Google Maps, scrape with the Kumora extension, then hit <b>⇪ Dashboard</b>.<br />
              Or import a JSON file on the <a href="#/leads">Leads</a> page.</p>
         </div>
       ) : (

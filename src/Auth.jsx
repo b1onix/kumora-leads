@@ -51,7 +51,7 @@ export function PinMark({ size = 20 }) {
 }
 
 /** Drifting topographic contours — the auth screen's ambient signature. */
-function TopoLines() {
+export function TopoLines() {
   return (
     <svg className="topo" viewBox="0 0 900 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <g fill="none" stroke="rgba(238,244,248,0.10)" strokeWidth="1.1">
@@ -104,7 +104,7 @@ export function AuthScreen() {
 
         <div className="brand-lockup">
           <PinMark size={20} />
-          Lead<b>Extractor</b>
+          <b>Kumora</b>
         </div>
 
         <div className="auth-hero">
@@ -169,6 +169,9 @@ export function AuthScreen() {
               <>Already have an account?{' '}
                 <a href="#" onClick={(e) => { e.preventDefault(); setErr(''); setMode('login'); }}>Sign in</a></>
             )}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: 12, fontSize: 11.5 }}>
+            <a href="/privacy" style={{ color: 'var(--ink-3)' }}>Privacy policy</a>
           </div>
         </div>
       </div>

@@ -85,7 +85,7 @@ const server = app.listen(config.port, config.host, async () => {
   const userCount = countUsers();
 
   banner([
-    'LeadExtractor Dashboard — API running',
+    'Kumora Dashboard — API running',
     config.publicUrl || `http://${config.host}:${config.port}`,
     '',
     llm.ok ? `DeepSeek: OK (${llm.model})` : `DeepSeek: NOT WORKING — ${llm.error}`,

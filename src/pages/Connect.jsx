@@ -28,7 +28,7 @@ export default function Connect() {
   if (!user) {
     return (
       <div>
-        <div className="connect-banner">Connecting the LeadExtractor extension — sign in to authorize.</div>
+        <div className="connect-banner">Connecting the Kumora extension — sign in to authorize.</div>
         <AuthScreen />
       </div>
     );
@@ -49,7 +49,7 @@ export default function Connect() {
     <div className="auth-wrap">
       <div className="auth-card">
         <div className="brand" style={{ justifyContent: 'center', marginBottom: 8 }}>
-          <PinMark size={17} /> Lead<b>Extractor</b>
+          <PinMark size={17} /> <b>Kumora</b>
         </div>
         <h2 style={{ textAlign: 'center', margin: '4px 0' }}>Connect extension</h2>
 
@@ -61,7 +61,7 @@ export default function Connect() {
         ) : (
           <>
             <p className="muted" style={{ textAlign: 'center' }}>
-              Allow the LeadExtractor Chrome extension to push scraped leads into your account:
+              Allow the Kumora Chrome extension to push scraped leads into your account:
             </p>
             <div className="card pad" style={{ textAlign: 'center', marginBottom: 16 }}>
               <div style={{ fontWeight: 800 }}>{user.email}</div>

@@ -9,6 +9,7 @@ import Review from './pages/Review.jsx';
 import Settings from './pages/Settings.jsx';
 import Billing from './pages/Billing.jsx';
 import Connect from './pages/Connect.jsx';
+import Privacy from './pages/Privacy.jsx';
 
 // Tiny hash-based router (no dependency).
 const ROUTES = {
@@ -78,6 +79,11 @@ export default function App() {
   const { user, loading } = useAuth();
   const hash = useHash();
 
+  // Public pages first — no login required.
+  // /privacy is a REAL path (the Chrome Web Store links to it directly), and
+  // #/privacy works too for in-app links.
+  if (window.location.pathname === '/privacy' || hash === '/privacy') return <Privacy />;
+
   // The /connect route is the extension authorize handshake. It must be
   // reachable whether or not you're already logged in (it shows login inside
   // itself if needed), and it renders outside the dashboard shell.
@@ -121,7 +127,7 @@ function Shell() {
       <DataCtx.Provider value={{ state, refresh, toast, counts }}>
         <div className="app">
           <aside className="sidebar">
-            <div className="brand"><span className="pin"><PinMark size={17} /></span> Lead<b>Extractor</b></div>
+            <div className="brand"><span className="pin"><PinMark size={17} /></span> <b>Kumora</b></div>
             <nav className="nav">
               {Object.entries(ROUTES).map(([path, r]) => {
                 const active = hash === path;

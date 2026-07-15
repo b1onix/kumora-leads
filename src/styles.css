@@ -1,5 +1,5 @@
 /* ============================================================
-   LeadExtractor — "Field Survey" identity
+   Kumora — "Field Survey" identity
    The product turns maps into pipelines, so the interface is a
    surveyor's chart desk: chart-ice paper, map-ink navy, one
    surveyor's-flag orange for actions, coordinates set in mono.
@@ -733,6 +733,90 @@ table.leads td.name { color: var(--ink); font-weight: 600; }
   padding: 11px;
   background: var(--ink);
   color: #cfe0eb;
+}
+
+/* ============================================================
+   LEGAL — public policy pages (/privacy). Ink hero with the topo
+   signature, then numbered ledger cards on chart paper.
+   ============================================================ */
+.legal { min-height: 100vh; background: var(--chart); }
+
+.legal-hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--ink);
+  color: #eef4f8;
+  padding: 40px 24px 48px;
+}
+.legal-hero .topo {
+  position: absolute;
+  inset: -30%;
+  width: 160%;
+  height: 160%;
+  opacity: 0.5;
+  animation: topoDrift 70s linear infinite alternate;
+  pointer-events: none;
+}
+.legal-hero-inner { position: relative; max-width: 720px; margin: 0 auto; }
+.legal-hero .brand-lockup { color: #eef4f8; text-decoration: none; margin-bottom: 30px; }
+.legal-hero .coord {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2.2px;
+  text-transform: uppercase;
+  color: #7f95a8;
+  margin: 26px 0 10px;
+}
+.legal-hero h1 {
+  font-size: clamp(30px, 4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -1.2px;
+  color: #f5f9fc;
+}
+.legal-hero p { margin-top: 10px; font-size: 15px; color: #a8bccb; max-width: 440px; }
+
+.legal-body { max-width: 720px; margin: -18px auto 0; padding: 0 24px 60px; position: relative; }
+
+.legal-card {
+  display: flex;
+  gap: 18px;
+  padding: 22px 24px;
+  margin-bottom: 12px;
+}
+.legal-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--survey);
+  flex: 0 0 26px;
+  padding-top: 4px;
+}
+.legal-card h2 {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  margin-bottom: 8px;
+}
+.legal-card p { font-size: 13.5px; color: var(--ink-2); line-height: 1.65; margin-bottom: 10px; }
+.legal-card p:last-child { margin-bottom: 0; }
+.legal-card p b { color: var(--ink); }
+.legal-card a { color: var(--water); font-weight: 600; text-decoration: none; }
+.legal-card a:hover { text-decoration: underline; }
+
+.legal-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 4px 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-3);
+}
+.legal-foot a { color: var(--water); text-decoration: none; }
+.legal-foot a:hover { text-decoration: underline; }
+
+@media (max-width: 640px) {
+  .legal-card { flex-direction: column; gap: 6px; }
 }
 
 /* ---------- responsive ---------- */
