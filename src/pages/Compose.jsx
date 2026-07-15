@@ -86,6 +86,8 @@ export default function Compose() {
         )}
       </div>
 
+      <WriterPicker toast={toast} />
+
       <div className="card pad" style={{ marginBottom: 20 }}>
         <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: 'var(--text-mute)', marginBottom: 12 }}>Run mode</div>
         <div style={{ display: 'flex', gap: 14 }}>
